@@ -15,17 +15,8 @@ import { AuthContext } from "../../contexts/auth";
 import Toast from "react-native-toast-message";
 import Conexao from "../../components/conexao";
 import { ConnContext } from "../../contexts/conexao";
-
-interface Servico {
-  id: string;
-  navegador: string;
-  titulo: string;
-  imagem: string;
-  cor_fundo: string;
-  cor_fonte: string;
-  necessita_conexao: boolean;
-  status: boolean;
-}
+import { ServicoType } from "../../types";
+import utils from "../../utils";
 
 const { width } = Dimensions.get("window");
 const blurhash =
@@ -36,7 +27,7 @@ export default function Home() {
   const { token, user } = useContext(AuthContext);
   const { status } = useContext(ConnContext);
   const [loading, setLoading] = useState(false);
-  const [servicos, setServicos] = useState<Servico[]>(uniSpace.servicos);
+  const [servicos, setServicos] = useState<ServicoType[]>(uniSpace.servicos);
 
   const getServicos = async () => {
     setLoading(true);
@@ -53,7 +44,6 @@ export default function Home() {
       })
       .catch((error) => {
         if (error.response) {
-          console.log(error.response.data);
           Toast.show({
             type: "error",
             text1: "Erro",
@@ -115,27 +105,25 @@ export default function Home() {
             shadowOpacity: 0.15,
             elevation: 1,
           }}
-        >
-
-        </View>
+        ></View>
         <View>
-            <Text
-              numberOfLines={1}
-              style={{
-                fontSize: 20,
-                fontWeight: "bold",
-              }}
-            >
-              Serviços
-            </Text>
-            <Text
-              numberOfLines={1}
-              style={{
-                fontWeight: "300",
-              }}
-            >
-              Alguma mensagem sobre os serviços
-            </Text>
+          <Text
+            numberOfLines={1}
+            style={{
+              fontSize: 20,
+              fontWeight: "bold",
+            }}
+          >
+            Serviços
+          </Text>
+          <Text
+            numberOfLines={1}
+            style={{
+              fontWeight: "300",
+            }}
+          >
+            Alguma mensagem sobre os serviços
+          </Text>
         </View>
       </View>
       {loading ? (
@@ -157,20 +145,20 @@ export default function Home() {
           initialNumToRender={4}
           ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
           showsVerticalScrollIndicator={false}
-          renderItem={({ item }: { item: Servico }) => (
+          renderItem={({ item }: { item: ServicoType }) => (
             <TouchableOpacity
               disabled={
                 item.necessita_conexao ? (status ? false : true) : false
               }
-              onPress={() => navigation.navigate(item.navegador as never)}
+              onPress={() => navigation.navigate(item.id as never)}
               activeOpacity={0.8}
               style={{
                 width: (width - 60) / 2,
                 backgroundColor: item.necessita_conexao
                   ? status
-                    ? item.cor_fundo
+                    ? utils.transforma_cor(item.cor_fundo)
                     : "#eee"
-                  : item.cor_fundo,
+                  : utils.transforma_cor(item.cor_fundo),
                 height: (width - 60) * 0.7,
                 borderRadius: 10,
                 padding: 10,
@@ -183,15 +171,15 @@ export default function Home() {
                 }}
               >
                 <Text
-                  numberOfLines={1}
+                  numberOfLines={2}
                   style={{
                     fontSize: 20,
                     fontWeight: "bold",
                     color: item.necessita_conexao
                       ? status
-                        ? item.cor_fonte
+                        ? utils.transforma_cor(item.cor_fonte)
                         : "#ccc"
-                      : item.cor_fonte,
+                      : utils.transforma_cor(item.cor_fonte),
                   }}
                 >
                   {item.titulo}

@@ -1,37 +1,42 @@
-import { useCallback, useEffect, useState } from "react";
-import { View } from "react-native";
-import { GiftedChat, IMessage } from "react-native-gifted-chat";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { GiftedChat, IMessage, Reply } from "react-native-gifted-chat";
+import { AuthContext } from "../../contexts/auth";
+import { Role } from "../../types";
+import pkg from "../../../package.json";
+import { Alert } from "react-native";
 
+const opcoes_admin: Reply[] = [
+  {
+    messageId: 1,
+    title: "Onde posso cadastrar um professor?",
+    value: "Cadastrar professor",
+  },
+  {
+    messageId: 1,
+    title: "Onde posso cadastrar um aluno?",
+    value: "Cadastrar aluno",
+  }
+]
+const opcoes_professor: Reply[] = []
 export default function Suporte() {
+  const {user} = useContext(AuthContext);
   const [mensagens, setMensagens] = useState<IMessage[]>([]);
 
   useEffect(() => {
+    Alert.alert("Aviso", "O suporte ainda está em desenvolvimento.");
     setMensagens([
       {
         _id: 1,
-        text: "Olá, seja bem vindo ao suporte! Em que posso ajudar?",
+        text: `Olá ${user!.nome}, sou o bot de suporte do ${pkg.name}! Como posso te ajudar? Estarei listando algumas opções abaixo. Mas caso não encontre o que procura, digite sua mensagem e um de nossos atendentes irá te responder o mais rápido possível.`,
         createdAt: new Date(),
         user: {
           _id: 2,
-          name: "React Native",
+          name: "Suporte " + pkg.name,
         },
         quickReplies: {
             type: 'radio',
             keepIt: true,
-            values: [
-              {
-                title: 'Como funciona o app?',
-                value: 'app',
-              },
-              {
-                title: 'Como funciona a sala virtual?',
-                value: 'virtual_room',
-              },
-              {
-                title: 'Quero falar com um atendente',
-                value: 'support',
-              }
-            ],
+            values: user!.role === Role.ADMIN ? opcoes_admin : []
           },
       },
     ]);
@@ -48,7 +53,7 @@ export default function Suporte() {
       onSend={(messages) => onSend(messages)}
       placeholder="Digite sua mensagem aqui..."
       user={{
-        _id: 1,
+        _id: user!._id,
       }}
     />
   );
