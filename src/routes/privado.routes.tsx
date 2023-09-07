@@ -6,8 +6,16 @@ import pkg from "../../package.json";
 import Suporte from "../pages/suporte";
 import { useContext } from "react";
 import { AuthContext } from "../contexts/auth";
+import Gerenciar_Espacos from "../pages/gerenciar_espacos";
 
-const { Navigator, Screen } = createStackNavigator();
+type RootStack = {
+  Home: undefined;
+  Support: undefined;
+  Manage_Spaces: undefined;
+}
+
+const { Navigator, Screen } = createStackNavigator<RootStack>();
+
 
 export default function Privado_Router() {
   const { handleLogout } = useContext(AuthContext);
@@ -45,6 +53,13 @@ export default function Privado_Router() {
         component={Suporte}
         options={{
           title: "Suporte",
+        }}
+      />
+      <Screen
+        name="Manage_Spaces"
+        component={Gerenciar_Espacos}
+        options={{
+          title: "Gerenciar Espaços",
         }}
       />
     </Navigator>
