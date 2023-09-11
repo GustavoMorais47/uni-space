@@ -1,7 +1,7 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 import { UserType } from "../../types";
 import api from "../../services/api";
-import uniSpace from "../../unispace.json";
+import db from "../../db.json";
 import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -34,7 +34,7 @@ export default function AuthProvider({ children }: any) {
           })
           .then(async (response) => {
             const { user } = response.data;
-            uniSpace.user = user;
+            db.user = user;
             setUser(user);
             await AsyncStorage.setItem("@token", token);
           })
@@ -91,65 +91,66 @@ export default function AuthProvider({ children }: any) {
   const handleLogout = async () => {
     await AsyncStorage.removeItem("@token");
     setToken(null);
-    uniSpace.user = null;
-    setUser(uniSpace.user);
+    db.user = null;
+    setUser(db.user);
   };
 
   const handleAuth = async () => {
-    await AsyncStorage.getItem("@token").then(async (token) => {
-      if (token) {
-        setToken(token);
-        await api
-          .get("/me", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-          .then(async (response) => {
-            const { user } = response.data;
-            uniSpace.user = user;
-            setUser(user);
-          })
-          .catch((err) => {
-            setToken(null);
-            if (
-              err.code === "ECONNABORTED" ||
-              err.message === "Network Error" ||
-              err.message === "timeout"
-            )
+    await AsyncStorage.getItem("@token")
+      .then(async (token) => {
+        if (token) {
+          setToken(token);
+          await api
+            .get("/me", {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            })
+            .then(async (response) => {
+              const { user } = response.data;
+              db.user = user;
+              setUser(user);
+            })
+            .catch((err) => {
+              setToken(null);
+              if (
+                err.code === "ECONNABORTED" ||
+                err.message === "Network Error" ||
+                err.message === "timeout"
+              )
+                return Toast.show({
+                  type: "error",
+                  text1: "Erro de conexão",
+                  text2: "Por favor verifique sua conexão com a internet.",
+                });
+
               return Toast.show({
                 type: "error",
-                text1: "Erro de conexão",
-                text2: "Por favor verifique sua conexão com a internet.",
+                text1: "Erro desconhecido",
+                text2: "Por favor tente novamente mais tarde.",
               });
-
-            return Toast.show({
-              type: "error",
-              text1: "Erro desconhecido",
-              text2: "Por favor tente novamente mais tarde.",
             });
+        }
+      })
+      .catch((err) => {
+        setToken(null);
+        if (
+          err.code === "ECONNABORTED" ||
+          err.message === "Network Error" ||
+          err.message === "timeout"
+        )
+          return Toast.show({
+            type: "error",
+            text1: "Erro de conexão",
+            text2: "Por favor verifique sua conexão com a internet.",
           });
-      }
-    })
-    .catch((err) => {
-      setToken(null);
-      if (
-        err.code === "ECONNABORTED" ||
-        err.message === "Network Error" ||
-        err.message === "timeout"
-      )
+
         return Toast.show({
           type: "error",
-          text1: "Erro de conexão",
-          text2: "Por favor verifique sua conexão com a internet.",
+          text1: "Erro desconhecido",
+          text2: "Por favor tente novamente mais tarde.",
         });
-
-      return Toast.show({
-        type: "error",
-        text1: "Erro desconhecido",
-        text2: "Por favor tente novamente mais tarde.",
       });
-    });
   };
   return (
     <AuthContext.Provider

@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { Image } from "expo-image";
 import { useNavigation } from "@react-navigation/native";
-import uniSpace from "../../unispace.json";
+import db from "../../db.json";
 import { useContext, useEffect, useState } from "react";
 import api from "../../services/api";
 import { AuthContext } from "../../contexts/auth";
@@ -27,7 +27,7 @@ export default function Home() {
   const { token, user } = useContext(AuthContext);
   const { status } = useContext(ConnContext);
   const [loading, setLoading] = useState(false);
-  const [servicos, setServicos] = useState<ServicoType[]>(uniSpace.servicos);
+  const [servicos, setServicos] = useState<ServicoType[]>(db.servicos);
 
   const getServicos = async () => {
     setLoading(true);
@@ -39,8 +39,8 @@ export default function Home() {
       })
       .then((response) => {
         const { servicos } = response.data;
-        uniSpace.servicos = servicos;
-        setServicos(uniSpace.servicos);
+        db.servicos = servicos;
+        setServicos(db.servicos);
       })
       .catch((error) => {
         if (error.response) {
