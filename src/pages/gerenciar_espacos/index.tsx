@@ -16,7 +16,7 @@ import { EspacoType } from "../../types";
 import Card from "../../components/card";
 import Conexao from "../../components/conexao";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
-import Input from "../../components/input";
+import Input from "../../components/conexao/input";
 
 const { width } = Dimensions.get("window");
 
@@ -35,12 +35,14 @@ export default function Gerenciar_Espacos() {
   const [indexOrdem, setIndexOrdem] = useState<number>(0);
   const [ordem, setOrdem] = useState<number>(indexOrdem);
   const [pesquisa, setPesquisa] = useState("");
-  const [espacos, setEspacos] = useState<EspacoType[]>(db.espacos as never[]);
+  const [espacos, setEspacos] = useState<EspacoType[]>(
+    db.espacos.data as never[]
+  );
 
   const filtrar = () => {
     setModal(false);
     setOrdem(indexOrdem);
-    const espacosFiltrados: EspacoType[] = db.espacos.filter((espaco) => {
+    const espacosFiltrados: EspacoType[] = db.espacos.data.filter((espaco) => {
       if (pesquisa === "") return true;
       return espaco.nome.toLowerCase().includes(pesquisa.toLowerCase());
     }) as never[];
@@ -256,7 +258,7 @@ export default function Gerenciar_Espacos() {
               gap: 20,
             }}
           >
-            <Dashboard role={user!.role} />
+            <Dashboard role={user!.role} page="Manage_Spaces" />
             <View
               style={{
                 flexDirection: "row",
@@ -264,14 +266,35 @@ export default function Gerenciar_Espacos() {
                 alignItems: "center",
               }}
             >
-              <Text
-                style={{
-                  fontSize: 20,
-                  fontWeight: "bold",
-                }}
-              >
-                Espaços
-              </Text>
+              <View>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontWeight: "bold",
+                  }}
+                >
+                  Espaços
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    fontWeight: "300",
+                  }}
+                >
+                  Última atualização:{" "}
+                  {new Date(db.espacos.ultima_atualizacao).toLocaleDateString(
+                    "pt-BR",
+                    {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: false,
+                    }
+                  )}
+                </Text>
+              </View>
               <View
                 style={{
                   flexDirection: "row",
@@ -302,7 +325,7 @@ export default function Gerenciar_Espacos() {
           marginBottom: 20,
         }}
         showsVerticalScrollIndicator={false}
-        renderItem={({ item, index }: { item: EspacoType, index: number }) => (
+        renderItem={({ item, index }: { item: EspacoType; index: number }) => (
           <Card
             style={{
               flexDirection: "row",

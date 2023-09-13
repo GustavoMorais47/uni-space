@@ -27,7 +27,7 @@ export default function Home() {
   const { token, user } = useContext(AuthContext);
   const { status } = useContext(ConnContext);
   const [loading, setLoading] = useState(false);
-  const [servicos, setServicos] = useState<ServicoType[]>(db.servicos);
+  const [servicos, setServicos] = useState<ServicoType[]>(db.servicos.data);
 
   const getServicos = async () => {
     setLoading(true);
@@ -39,8 +39,9 @@ export default function Home() {
       })
       .then((response) => {
         const { servicos } = response.data;
-        db.servicos = servicos;
-        setServicos(db.servicos);
+        db.servicos.ultima_atualizacao = new Date().toISOString();
+        db.servicos.data = servicos;
+        setServicos(db.servicos.data);
       })
       .catch((error) => {
         if (error.response) {
@@ -119,10 +120,22 @@ export default function Home() {
           <Text
             numberOfLines={1}
             style={{
+              fontSize: 12,
               fontWeight: "300",
             }}
           >
-            Alguma mensagem sobre os serviços
+            Últimas atualização:{" "}
+            {new Date(db.servicos.ultima_atualizacao).toLocaleDateString(
+              "pt-BR",
+              {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+              }
+            )}
           </Text>
         </View>
       </View>

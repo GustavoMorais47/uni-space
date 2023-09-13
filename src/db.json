@@ -1,76 +1,82 @@
 {
   "user": null,
-  "servicos": [],
-  "espacos": [
-    {
-      "id":"1",
-      "nome":"Espaço 1",
-      "localizacao":"Localização 1",
-      "capacidade":1,
-      "status": false
-    },
-    {
-      "id":"2",
-      "nome":"Espaço 2",
-      "localizacao":"Localização 2",
-      "capacidade":2,
-      "status": false
-    },
-    {
-      "id":"3",
-      "nome":"Espaço 3",
-      "localizacao":"Localização 3",
-      "capacidade":3,
-      "status": false
-    },
-    {
-      "id":"4",
-      "nome":"Espaço 4",
-      "localizacao":"Localização 4",
-      "capacidade":4,
-      "status": false
-    },
-    {
-      "id":"5",
-      "nome":"Espaço 5",
-      "localizacao":"Localização 5",
-      "capacidade":5,
-      "status": true
-    },
-    {
-      "id":"6",
-      "nome":"Espaço 6",
-      "localizacao":"Localização 6",
-      "capacidade":6,
-      "status": true
-    },
-    {
-      "id":"7",
-      "nome":"Espaço 7",
-      "localizacao":"Localização 7",
-      "capacidade":7,
-      "status": true
-    },
-    {
-      "id":"8",
-      "nome":"Espaço 8",
-      "localizacao":"Localização 8",
-      "capacidade":8,
-      "status": true
-    },
-    {
-      "id":"9",
-      "nome":"Espaço 9",
-      "localizacao":"Localização 9",
-      "capacidade":9,
-      "status": true
-    },
-    {
-      "id":"10",
-      "nome":"Espaço 10",
-      "localizacao":"Localização 10",
-      "capacidade":10,
-      "status": true
-    }
-  ]
+  "servicos": {
+    "ultima_atualizacao": "2019-10-01T00:00:00.000Z",
+    "data": []
+  },
+  "espacos": {
+    "ultima_atualizacao": "2019-10-01T00:00:00.000Z",
+    "data": [
+      {
+        "id": "1",
+        "nome": "Espaço 1",
+        "localizacao": "Localização 1",
+        "capacidade": 1,
+        "status": false
+      },
+      {
+        "id": "2",
+        "nome": "Espaço 2",
+        "localizacao": "Localização 2",
+        "capacidade": 2,
+        "status": false
+      },
+      {
+        "id": "3",
+        "nome": "Espaço 3",
+        "localizacao": "Localização 3",
+        "capacidade": 3,
+        "status": false
+      },
+      {
+        "id": "4",
+        "nome": "Espaço 4",
+        "localizacao": "Localização 4",
+        "capacidade": 4,
+        "status": false
+      },
+      {
+        "id": "5",
+        "nome": "Espaço 5",
+        "localizacao": "Localização 5",
+        "capacidade": 5,
+        "status": true
+      },
+      {
+        "id": "6",
+        "nome": "Espaço 6",
+        "localizacao": "Localização 6",
+        "capacidade": 6,
+        "status": true
+      },
+      {
+        "id": "7",
+        "nome": "Espaço 7",
+        "localizacao": "Localização 7",
+        "capacidade": 7,
+        "status": true
+      },
+      {
+        "id": "8",
+        "nome": "Espaço 8",
+        "localizacao": "Localização 8",
+        "capacidade": 8,
+        "status": true
+      },
+      {
+        "id": "9",
+        "nome": "Espaço 9",
+        "localizacao": "Localização 9",
+        "capacidade": 9,
+        "status": true
+      },
+      {
+        "id": "10",
+        "nome": "Espaço 10",
+        "localizacao": "Localização 10",
+        "capacidade": 10,
+        "status": true
+      }
+    ]
+  }
 }

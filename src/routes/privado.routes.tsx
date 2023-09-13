@@ -9,13 +9,7 @@ import { AuthContext } from "../contexts/auth";
 import Gerenciar_Espacos from "../pages/gerenciar_espacos";
 import { useNavigation } from "@react-navigation/native";
 import Gerenciar_Espacos_Adicionar from "../pages/gerenciar_espacos/add";
-
-type RootStack = {
-  Home: undefined;
-  Support: undefined;
-  Manage_Spaces: undefined;
-  Manage_Spaces_Add: undefined;
-};
+import { RootStack } from "../types/index.routes";
 
 const { Navigator, Screen, Group } = createStackNavigator<RootStack>();
 
@@ -26,6 +20,21 @@ export default function Privado_Router() {
 
   const iconRight = (route: keyof RootStack): React.ReactNode => {
     switch (route) {
+      case "Home":
+        return (
+          <TouchableOpacity
+            onPress={handleLogout}
+            activeOpacity={0.7}
+            style={{
+              width: 40,
+              height: 40,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Ionicons name="person-circle-outline" size={26} color="black" />
+          </TouchableOpacity>
+        );
       case "Manage_Spaces":
         return (
           <TouchableOpacity
@@ -42,24 +51,9 @@ export default function Privado_Router() {
           </TouchableOpacity>
         );
       case "Manage_Spaces_Add":
-        return (
-          null
-        );
+        return null;
       default:
-        return (
-          <TouchableOpacity
-            onPress={handleLogout}
-            activeOpacity={0.7}
-            style={{
-              width: 40,
-              height: 40,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Ionicons name="person-circle-outline" size={26} color="black" />
-          </TouchableOpacity>
-        );
+        return undefined;
     }
   };
 
