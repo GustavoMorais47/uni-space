@@ -1,15 +1,4 @@
-import {
-  View,
-  ScrollView,
-  TouchableOpacity,
-  Dimensions,
-  Image,
-  VirtualizedList,
-  Text,
-  Modal,
-  SafeAreaView,
-  Switch,
-} from "react-native";
+import { View, ScrollView, TouchableOpacity, Text, Switch } from "react-native";
 import Conexao from "../../components/conexao";
 import Card from "../../components/card";
 import Input from "../../components/conexao/input";
@@ -19,8 +8,9 @@ import * as ImagePicker from "expo-image-picker";
 import Toast from "react-native-toast-message";
 import { useNavigation } from "@react-navigation/native";
 import ModalCustom from "../../components/modal";
-
-const { width } = Dimensions.get("window");
+import Button from "../../components/button";
+import Slider from "../../components/slider";
+import config from "../../config.json";
 
 export default function Gerenciar_Espacos_Adicionar() {
   const navigation = useNavigation();
@@ -28,12 +18,6 @@ export default function Gerenciar_Espacos_Adicionar() {
   const [nome, setNome] = useState<string>("");
   const [localizacao, setLocalizacao] = useState<string>("");
   const [capacidade, setCapacidade] = useState<number>(0);
-
-  const [mostrar, setMostrar] = useState<boolean>(false);
-  const [indexImage, setIndexImage] = useState<number>(0);
-
-  const [imagemSelecionada, setImagemSelecionada] = useState<number>(0);
-  const [mostrarImagem, setMostrarImagem] = useState<boolean>(false);
 
   const [mostrarOpcoes, setMostrarOpcoes] = useState<boolean>(false);
   const [permanecer, setPermanecer] = useState<boolean>(false);
@@ -98,16 +82,8 @@ export default function Gerenciar_Espacos_Adicionar() {
   };
 
   const removerImagem = (index: number) => {
-    setImagens(imagens.filter((_, i) => i !== indexImage));
+    setImagens(imagens.filter((_, i) => i !== index));
   };
-
-  useEffect(() => {
-    setMostrar(true);
-  }, [indexImage]);
-
-  useEffect(() => {
-    if (mostrar) setTimeout(() => setMostrar(false), 5000);
-  }, [mostrar]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -146,132 +122,7 @@ export default function Gerenciar_Espacos_Adicionar() {
               gap: 10,
             }}
           >
-            <View>
-              <VirtualizedList
-                data={imagens}
-                initialNumToRender={4}
-                horizontal
-                renderItem={({
-                  item,
-                  index,
-                }: {
-                  item: string;
-                  index: number;
-                }) => (
-                  <TouchableOpacity
-                    onPress={() => {
-                      setImagemSelecionada(index);
-                      setMostrarImagem(true);
-                    }}
-                    onLongPress={() => removerImagem(index)}
-                    activeOpacity={0.75}
-                    style={{
-                      width: width - 60,
-                      height: 200,
-                      borderRadius: 10,
-                      overflow: "hidden",
-                    }}
-                  >
-                    <Image
-                      source={{ uri: item }}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                      }}
-                    />
-                    {index === 0 && (
-                      <View
-                        style={{
-                          backgroundColor: "rgba(0,0,0,0.5)",
-                          position: "absolute",
-                          top: 0,
-                          left: 0,
-                          padding: 10,
-                          borderBottomRightRadius: 10,
-                          flexDirection: "row",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          gap: 5,
-                        }}
-                      >
-                        <Ionicons name="star" size={12} color="white" />
-                        <Text
-                          style={{
-                            color: "white",
-                            fontSize: 12,
-                          }}
-                        >
-                          Imagem principal
-                        </Text>
-                      </View>
-                    )}
-                  </TouchableOpacity>
-                )}
-                ListEmptyComponent={() => (
-                  <View
-                    style={{
-                      alignItems: "center",
-                      justifyContent: "center",
-                      width: width - 40,
-                      paddingVertical: 20,
-                      height: 200,
-                    }}
-                  >
-                    <Text
-                      style={{
-                        fontSize: 20,
-                        color: "rgba(0,0,0,0.3)",
-                      }}
-                    >
-                      Nenhuma imagem selecionada
-                    </Text>
-                  </View>
-                )}
-                keyExtractor={(item, index) => index.toString()}
-                ItemSeparatorComponent={() => (
-                  <View
-                    style={{
-                      width: 10,
-                    }}
-                  />
-                )}
-                getItemCount={(data) => data.length}
-                getItem={(data, index) => data[index]}
-                onScroll={(event) => {
-                  const index = Math.round(
-                    event.nativeEvent.contentOffset.x / (width - 60)
-                  );
-                  setIndexImage(index);
-                }}
-                showsHorizontalScrollIndicator={false}
-              />
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  position: "absolute",
-                  bottom: 10,
-                  left: 0,
-                  right: 0,
-                  gap: 5,
-                  display: mostrar ? "flex" : "none",
-                }}
-              >
-                {imagens.map((_, i) => (
-                  <View
-                    key={i}
-                    style={{
-                      backgroundColor:
-                        indexImage === i ? "rgba(0,0,0,1)" : "rgba(0,0,0,0.1)",
-                      width: 10,
-                      height: 10,
-                      borderRadius: 5,
-                    }}
-                  />
-                ))}
-              </View>
-            </View>
+            <Slider images={imagens} onLongPress={removerImagem} fullImage />
             <View
               style={{
                 flexDirection: "row",
@@ -280,28 +131,42 @@ export default function Gerenciar_Espacos_Adicionar() {
                 gap: 10,
               }}
             >
-              <TouchableOpacity
+              <Button
                 onPress={openCamera}
-                style={{
-                  flex: 1,
-                  backgroundColor: "rgba(0,0,0,0.05)",
-                  borderRadius: 10,
-                  padding: 10,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexDirection: "row",
-                  gap: 10,
-                }}
+                active={
+                  imagens.length < config.gerenciamento_espacos.qtd_imagens
+                }
               >
-                <Ionicons name="camera" size={30} color="rgba(0,0,0,0.5)" />
-                <Text
+                <View
                   style={{
-                    color: "rgba(0,0,0,0.5)",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexDirection: "row",
+                    gap: 10,
                   }}
                 >
-                  Capturar
-                </Text>
-              </TouchableOpacity>
+                  <Ionicons
+                    name="camera"
+                    size={30}
+                    color={
+                      imagens.length < config.gerenciamento_espacos.qtd_imagens
+                        ? "#fff"
+                        : "rgba(0,0,0,0.5)"
+                    }
+                  />
+                  <Text
+                    style={{
+                      color:
+                        imagens.length <
+                        config.gerenciamento_espacos.qtd_imagens
+                          ? "#fff"
+                          : "rgba(0,0,0,0.5)",
+                    }}
+                  >
+                    Capturar
+                  </Text>
+                </View>
+              </Button>
               <Text
                 style={{
                   textAlign: "center",
@@ -311,32 +176,42 @@ export default function Gerenciar_Espacos_Adicionar() {
               >
                 ou
               </Text>
-              <TouchableOpacity
+              <Button
                 onPress={pickImage}
-                style={{
-                  flex: 1,
-                  backgroundColor: "rgba(0,0,0,0.05)",
-                  borderRadius: 10,
-                  padding: 10,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexDirection: "row",
-                  gap: 10,
-                }}
+                active={
+                  imagens.length < config.gerenciamento_espacos.qtd_imagens
+                }
               >
-                <Ionicons
-                  name="cloud-upload"
-                  size={30}
-                  color="rgba(0,0,0,0.5)"
-                />
-                <Text
+                <View
                   style={{
-                    color: "rgba(0,0,0,0.5)",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexDirection: "row",
+                    gap: 10,
                   }}
                 >
-                  Carregar
-                </Text>
-              </TouchableOpacity>
+                  <Ionicons
+                    name="cloud-upload"
+                    size={30}
+                    color={
+                      imagens.length < config.gerenciamento_espacos.qtd_imagens
+                        ? "#fff"
+                        : "rgba(0,0,0,0.5)"
+                    }
+                  />
+                  <Text
+                    style={{
+                      color:
+                        imagens.length <
+                        config.gerenciamento_espacos.qtd_imagens
+                          ? "#fff"
+                          : "rgba(0,0,0,0.5)",
+                    }}
+                  >
+                    Carregar
+                  </Text>
+                </View>
+              </Button>
             </View>
             <View>
               <Text
@@ -352,7 +227,10 @@ export default function Gerenciar_Espacos_Adicionar() {
                 >
                   Atenção:{" "}
                 </Text>
-                São permitidas apenas 5 imagens!
+                São permitidas apenas {config.gerenciamento_espacos.qtd_imagens}{" "}
+                {config.gerenciamento_espacos.qtd_imagens > 1
+                  ? "imagens!"
+                  : "imagem"}
               </Text>
               <Text
                 style={{
@@ -370,41 +248,6 @@ export default function Gerenciar_Espacos_Adicionar() {
                 Precione e segure para excluir uma imagem
               </Text>
             </View>
-            <Modal visible={mostrarImagem} animationType="slide">
-              <SafeAreaView
-                style={{
-                  flex: 1,
-                  backgroundColor: "black",
-                }}
-              >
-                <View
-                  style={{
-                    flex: 1,
-                  }}
-                >
-                  <TouchableOpacity
-                    onPress={() => setMostrarImagem(false)}
-                    style={{
-                      position: "absolute",
-                      top: 10,
-                      left: 10,
-                      padding: 10,
-                      zIndex: 1,
-                    }}
-                  >
-                    <Ionicons name="close" size={30} color="white" />
-                  </TouchableOpacity>
-                  <Image
-                    source={{ uri: imagens[imagemSelecionada] }}
-                    resizeMode="contain"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                    }}
-                  />
-                </View>
-              </SafeAreaView>
-            </Modal>
           </Card>
           <Card
             title="Informações"
@@ -439,43 +282,8 @@ export default function Gerenciar_Espacos_Adicionar() {
               gap: 10,
             }}
           >
-            <TouchableOpacity
-              style={{
-                backgroundColor: "#000",
-                height: 40,
-                borderRadius: 10,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Text
-                style={{
-                  color: "#fff",
-                  fontWeight: "bold",
-                  fontSize: 16,
-                }}
-              >
-                Adicionar
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                backgroundColor: "rgba(0,0,0,0.05)",
-                height: 40,
-                borderRadius: 10,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Text
-                style={{
-                  fontWeight: "bold",
-                  fontSize: 16,
-                }}
-              >
-                Limpar
-              </Text>
-            </TouchableOpacity>
+            <Button title="Adicionar" />
+            <Button title="Limpar" type="secundary" />
           </Card>
           <ModalCustom
             title="Opções"
