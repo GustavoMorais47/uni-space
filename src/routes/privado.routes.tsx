@@ -3,19 +3,22 @@ import Home from "../pages/home";
 import { TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import pkg from "../../package.json";
-import Suporte from "../pages/suporte";
 import React, { useContext } from "react";
 import { AuthContext } from "../contexts/auth";
 import Gerenciar_Espacos from "../pages/gerenciar_espacos";
-import { useNavigation } from "@react-navigation/native";
-import Gerenciar_Espacos_Adicionar from "../pages/gerenciar_espacos/add";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RootStack } from "../types/index.routes";
+import Gerenciar_Espacos_Detalhes from "../pages/gerenciar_espacos/detalhes";
+import { Role } from "../types";
+import Gerenciar_Espacos_Adicionar from "../pages/gerenciar_espacos/adicionar";
+
+type StackNavigation = NavigationProp<RootStack>;
 
 const { Navigator, Screen, Group } = createStackNavigator<RootStack>();
 
 export default function Privado_Router() {
-  const navigation = useNavigation();
-  const { handleLogout } = useContext(AuthContext);
+  const navigation = useNavigation<StackNavigation>();
+  const { handleLogout, user } = useContext(AuthContext);
   const app_name = pkg.name.slice(0, 1).toUpperCase() + pkg.name.slice(1);
 
   const iconRight = (route: keyof RootStack): React.ReactNode => {
@@ -35,10 +38,12 @@ export default function Privado_Router() {
             <Ionicons name="person-circle-outline" size={26} color="black" />
           </TouchableOpacity>
         );
-      case "Manage_Spaces":
+      case "Gerenciamento_de_Espacos":
         return (
           <TouchableOpacity
-            onPress={() => navigation.navigate("Manage_Spaces_Add" as never)}
+            onPress={() =>
+              navigation.navigate("Gerenciamento_de_Espacos_Adicionar")
+            }
             activeOpacity={0.7}
             style={{
               width: 40,
@@ -50,8 +55,6 @@ export default function Privado_Router() {
             <Ionicons name="add-circle-outline" size={26} color="black" />
           </TouchableOpacity>
         );
-      case "Manage_Spaces_Add":
-        return null;
       default:
         return undefined;
     }
@@ -61,6 +64,7 @@ export default function Privado_Router() {
     <Navigator
       initialRouteName="Home"
       screenOptions={({ route }) => ({
+        animationEnabled: false,
         headerTitleAlign: route.name === "Home" ? "left" : "center",
         title: route.name === "Home" ? app_name : route.name,
         headerBackTitleVisible: false,
@@ -71,29 +75,31 @@ export default function Privado_Router() {
       })}
     >
       <Screen name="Home" component={Home} />
-      <Screen
-        name="Support"
-        component={Suporte}
-        options={{
-          title: "Suporte",
-        }}
-      />
-      <Group>
-        <Screen
-          name="Manage_Spaces"
-          component={Gerenciar_Espacos}
-          options={{
-            title: "Gerenciar Espaços",
-          }}
-        />
-        <Screen
-          name="Manage_Spaces_Add"
-          component={Gerenciar_Espacos_Adicionar}
-          options={{
-            title: "Adicionar Espaço",
-          }}
-        />
-      </Group>
+      {(user?.role === Role.ADMIN || user?.role === Role.LABS) && (
+        <Group>
+          <Screen
+            name="Gerenciamento_de_Espacos"
+            component={Gerenciar_Espacos}
+            options={{
+              title: "Gerenciar Espaços",
+            }}
+          />
+          <Screen
+            name="Gerenciamento_de_Espacos_Adicionar"
+            component={Gerenciar_Espacos_Adicionar}
+            options={{
+              title: "Adicionar Espaço",
+            }}
+          />
+          <Screen
+            name="Gerenciamento_de_Espacos_Detalhes"
+            component={Gerenciar_Espacos_Detalhes}
+            options={{
+              title: "Detalhes do Espaço",
+            }}
+          />
+        </Group>
+      )}
     </Navigator>
   );
 }

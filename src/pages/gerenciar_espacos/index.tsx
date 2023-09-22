@@ -258,7 +258,7 @@ export default function Gerenciar_Espacos() {
               gap: 20,
             }}
           >
-            <Dashboard role={user!.role} page="Manage_Spaces" />
+            <Dashboard role={user!.role} page="Gerenciamento_de_Espacos" />
             <View
               style={{
                 flexDirection: "row",

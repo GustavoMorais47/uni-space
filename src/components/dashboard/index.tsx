@@ -49,9 +49,14 @@ function Container({
 
 export default function Dashboard({ role, page }: Props) {
   switch (page) {
-    case "Manage_Spaces":
-      if (role === Role.ADMIN) return null;
-      if (role === Role.LABS)
+    case "Home":
+      if (role === Role.ADMIN || role === Role.LABS)
+        return (
+          <>
+          </>
+        );
+    case "Gerenciamento_de_Espacos":
+      if (role === Role.ADMIN || role === Role.LABS)
         return (
           <Container titulo="Dashboard">
             <Cards.gerenciamento_espacos_ativos_x_inativos />
@@ -60,9 +65,6 @@ export default function Dashboard({ role, page }: Props) {
             <Cards.gerenciamento_espacos_capacidade />
           </Container>
         );
-      if (role === Role.INFRA) return null;
-      if (role === Role.PROFESSOR) return null;
-      if (role === Role.ALUNO) return null;
     default:
       return null;
   }

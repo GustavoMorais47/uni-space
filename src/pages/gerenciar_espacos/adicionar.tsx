@@ -1,113 +1,147 @@
-import { View, ScrollView, TouchableOpacity, Text, Switch } from "react-native";
+import {
+  View,
+  ScrollView,
+  TouchableOpacity,
+  Text,
+  Switch,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import Conexao from "../../components/conexao";
 import Card from "../../components/card";
 import Input from "../../components/conexao/input";
 import { useEffect, useState } from "react";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
 import Toast from "react-native-toast-message";
-import { useNavigation } from "@react-navigation/native";
-import ModalCustom from "../../components/modal";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
 import Button from "../../components/button";
 import Slider from "../../components/slider";
 import config from "../../config.json";
+import { RootStack } from "../../types/index.routes";
+import useCameraPicker from "../../hooks/useCameraPicker";
+import useGaleriaPicker from "../../hooks/useGaleriaPicker";
+
+type RootStackNavigation = NavigationProp<RootStack>;
 
 export default function Gerenciar_Espacos_Adicionar() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<RootStackNavigation>();
   const [imagens, setImagens] = useState<string[]>([]);
   const [nome, setNome] = useState<string>("");
   const [localizacao, setLocalizacao] = useState<string>("");
   const [capacidade, setCapacidade] = useState<number>(0);
 
-  const [mostrarOpcoes, setMostrarOpcoes] = useState<boolean>(false);
   const [permanecer, setPermanecer] = useState<boolean>(false);
 
-  const pickImage = async () => {
-    const permissao = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  const adicionarImagemPelaGaleria = async () => {
+    const imagem = await useGaleriaPicker();
 
-    if (!permissao.granted) {
+    if (!imagem) {
       Toast.show({
         type: "error",
-        text1: "Permissão negada",
-        text2:
-          "Você precisa permitir o acesso a galeria para adicionar imagens",
+        text1: "Ops!",
+        text2: "Não foi possível carregar a imagem",
       });
       return;
     }
 
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 0.5,
-      base64: true,
-    });
-
-    if (result.canceled) return;
-
-    if (!result.assets[0].base64) return;
-    setImagens([
-      ...imagens,
-      `data:image/png;base64,${result.assets[0].base64}`,
-    ]);
+    setImagens([...imagens, imagem]);
   };
 
-  const openCamera = async () => {
-    const permissao = await ImagePicker.requestCameraPermissionsAsync();
+  const adicionarImagemPelaCamera = async () => {
+    const imagem = await useCameraPicker();
 
-    if (!permissao.granted) {
+    if (!imagem) {
       Toast.show({
         type: "error",
-        text1: "Permissão negada",
-        text2: "Você precisa permitir o acesso a camera para adicionar imagens",
+        text1: "Ops!",
+        text2: "Não foi possível carregar a imagem",
       });
       return;
     }
 
-    let result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 0.5,
-      base64: true,
-    });
-
-    if (result.canceled) return;
-
-    if (!result.assets[0].base64) return;
-    setImagens([
-      ...imagens,
-      `data:image/png;base64,${result.assets[0].base64}`,
-    ]);
+    setImagens([...imagens, imagem]);
   };
 
   const removerImagem = (index: number) => {
     setImagens(imagens.filter((_, i) => i !== index));
   };
 
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity
-          onPress={() => setMostrarOpcoes(true)}
-          activeOpacity={0.7}
-          style={{
-            width: 40,
-            height: 40,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <FontAwesome name="gear" size={26} color="black" />
-        </TouchableOpacity>
-      ),
-    });
-  }, []);
+  const Cadastrar = async () => {
+    if (nome.trim() === "") {
+      Toast.show({
+        type: "error",
+        text1: "Ops!",
+        text2: "Preencha o nome do espaço",
+      });
+      return;
+    }
+
+    if (localizacao.trim() === "") {
+      Toast.show({
+        type: "error",
+        text1: "Ops!",
+        text2: "Preencha a localização do espaço",
+      });
+      return;
+    }
+    Alert.alert(
+      "Cadastrar",
+      "Deseja realmente cadastrar este espaço? O mesmo não poderá ser deletado posteriormente.",
+      [
+        {
+          text: "Não",
+          style: "cancel",
+        },
+        {
+          text: "Sim",
+          onPress: async () => {
+            try {
+              // const response = await api.post("/espacos", {});
+
+              // if (response.status !== 201) {
+              //   Toast.show({
+              //     type: "error",
+              //     text1: "Ops!",
+              //     text2: "Ocorreu um erro ao cadastrar o espaço",
+              //   });
+              //   return;
+              // }
+
+              Toast.show({
+                type: "success",
+                text1: "Sucesso",
+                text2: "Espaço cadastrado com sucesso",
+              });
+
+              if (permanecer) {
+                setNome("");
+                setLocalizacao("");
+                setCapacidade(0);
+                setImagens([]);
+              } else {
+                navigation.navigate("Gerenciamento_de_Espacos_Detalhes", {
+                  id: "Teste de ID",
+                });
+              }
+            } catch (error) {
+              Toast.show({
+                type: "error",
+                text1: "Ops!",
+                text2: "Ocorreu um erro ao cadastrar o espaço",
+              });
+            }
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
 
   return (
     <>
       <Conexao />
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
         <View
           style={{
             flex: 1,
@@ -123,96 +157,6 @@ export default function Gerenciar_Espacos_Adicionar() {
             }}
           >
             <Slider images={imagens} onLongPress={removerImagem} fullImage />
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                gap: 10,
-              }}
-            >
-              <Button
-                onPress={openCamera}
-                active={
-                  imagens.length < config.gerenciamento_espacos.qtd_imagens
-                }
-              >
-                <View
-                  style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexDirection: "row",
-                    gap: 10,
-                  }}
-                >
-                  <Ionicons
-                    name="camera"
-                    size={30}
-                    color={
-                      imagens.length < config.gerenciamento_espacos.qtd_imagens
-                        ? "#fff"
-                        : "rgba(0,0,0,0.5)"
-                    }
-                  />
-                  <Text
-                    style={{
-                      color:
-                        imagens.length <
-                        config.gerenciamento_espacos.qtd_imagens
-                          ? "#fff"
-                          : "rgba(0,0,0,0.5)",
-                    }}
-                  >
-                    Capturar
-                  </Text>
-                </View>
-              </Button>
-              <Text
-                style={{
-                  textAlign: "center",
-                  color: "rgba(0,0,0,0.5)",
-                  fontStyle: "italic",
-                }}
-              >
-                ou
-              </Text>
-              <Button
-                onPress={pickImage}
-                active={
-                  imagens.length < config.gerenciamento_espacos.qtd_imagens
-                }
-              >
-                <View
-                  style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexDirection: "row",
-                    gap: 10,
-                  }}
-                >
-                  <Ionicons
-                    name="cloud-upload"
-                    size={30}
-                    color={
-                      imagens.length < config.gerenciamento_espacos.qtd_imagens
-                        ? "#fff"
-                        : "rgba(0,0,0,0.5)"
-                    }
-                  />
-                  <Text
-                    style={{
-                      color:
-                        imagens.length <
-                        config.gerenciamento_espacos.qtd_imagens
-                          ? "#fff"
-                          : "rgba(0,0,0,0.5)",
-                    }}
-                  >
-                    Carregar
-                  </Text>
-                </View>
-              </Button>
-            </View>
             <View>
               <Text
                 style={{
@@ -248,6 +192,87 @@ export default function Gerenciar_Espacos_Adicionar() {
                 Precione e segure para excluir uma imagem
               </Text>
             </View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                gap: 10,
+              }}
+            >
+              <Button
+                onPress={adicionarImagemPelaCamera}
+                active={
+                  imagens.length < config.gerenciamento_espacos.qtd_imagens
+                }
+              >
+                <View
+                  style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexDirection: "row",
+                    gap: 10,
+                  }}
+                >
+                  <Ionicons
+                    name="camera"
+                    size={30}
+                    color={
+                      imagens.length < config.gerenciamento_espacos.qtd_imagens
+                        ? "#fff"
+                        : "rgba(0,0,0,0.5)"
+                    }
+                  />
+                  <Text
+                    style={{
+                      color:
+                        imagens.length <
+                        config.gerenciamento_espacos.qtd_imagens
+                          ? "#fff"
+                          : "rgba(0,0,0,0.5)",
+                    }}
+                  >
+                    Capturar
+                  </Text>
+                </View>
+              </Button>
+              <Button
+                onPress={adicionarImagemPelaGaleria}
+                active={
+                  imagens.length < config.gerenciamento_espacos.qtd_imagens
+                }
+              >
+                <View
+                  style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexDirection: "row",
+                    gap: 10,
+                  }}
+                >
+                  <Ionicons
+                    name="cloud-upload"
+                    size={30}
+                    color={
+                      imagens.length < config.gerenciamento_espacos.qtd_imagens
+                        ? "#fff"
+                        : "rgba(0,0,0,0.5)"
+                    }
+                  />
+                  <Text
+                    style={{
+                      color:
+                        imagens.length <
+                        config.gerenciamento_espacos.qtd_imagens
+                          ? "#fff"
+                          : "rgba(0,0,0,0.5)",
+                    }}
+                  >
+                    Carregar
+                  </Text>
+                </View>
+              </Button>
+            </View>
           </Card>
           <Card
             title="Informações"
@@ -282,26 +307,41 @@ export default function Gerenciar_Espacos_Adicionar() {
               gap: 10,
             }}
           >
-            <Button title="Adicionar" />
-            <Button title="Limpar" type="secundary" />
-          </Card>
-          <ModalCustom
-            title="Opções"
-            active={mostrarOpcoes}
-            setActive={setMostrarOpcoes}
-          >
             <View
               style={{
                 flexDirection: "row",
-                alignItems: "center",
                 justifyContent: "space-between",
+                alignItems: "center",
                 gap: 10,
               }}
             >
-              <Text>Permanecer no cadastro:</Text>
-              <Switch value={permanecer} onValueChange={setPermanecer} />
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: "bold",
+                }}
+              >
+                Permanecer na tela
+              </Text>
+              <Switch
+                value={permanecer}
+                onValueChange={setPermanecer}
+                thumbColor={permanecer ? "#000" : "#eee"}
+                trackColor={{
+                  false: "#ddd",
+                  true: "#ddd",
+                }}
+              />
             </View>
-          </ModalCustom>
+          </Card>
+          <Card
+            style={{
+              gap: 10,
+            }}
+          >
+            <Button title="Adicionar" onPress={Cadastrar} />
+            <Button title="Limpar" type="secundary" />
+          </Card>
         </View>
       </ScrollView>
     </>

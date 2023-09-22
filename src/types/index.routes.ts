@@ -1,6 +1,7 @@
 export type RootStack = {
   Home: undefined;
-  Support: undefined;
-  Manage_Spaces: undefined;
-  Manage_Spaces_Add: undefined;
+  Suporte: undefined;
+  Gerenciamento_de_Espacos: undefined;
+  Gerenciamento_de_Espacos_Adicionar: undefined;
+  Gerenciamento_de_Espacos_Detalhes: { id: string };
 };

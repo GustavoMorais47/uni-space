@@ -1,3 +1,5 @@
+import { RootStack } from "./index.routes";
+
 export interface CorType {
   vermelho: number;
   verde: number;
@@ -23,12 +25,11 @@ export interface UserType {
 }
 
 export interface ServicoType {
-  id: string;
+  navegacao: string;
   titulo: string;
   imagem: string;
   cor_fundo: CorType;
   cor_fonte: CorType;
-  necessita_conexao: boolean;
   status: boolean;
 }
 
