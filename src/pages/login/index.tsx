@@ -42,12 +42,14 @@ export default function Login() {
       });
 
     setLoading(true);
-    handleLogin(cpf, senha).finally(() => setLoading(false));
+    await handleLogin(cpf, senha).finally(() => setLoading(false));
   };
 
   useEffect(() => {
     setModal(true);
-    handleAuth().finally(() => setModal(false));
+    setTimeout(() => {
+      handleAuth().finally(() => setModal(false));
+    }, 1000);
   }, []);
   return (
     <SafeAreaView
@@ -274,7 +276,7 @@ export default function Login() {
                 justifyContent: "center",
               }}
             >
-              <ActivityIndicator size="large"/>
+              <ActivityIndicator size="large" />
             </View>
           </View>
         </SafeAreaView>

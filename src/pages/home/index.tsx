@@ -63,7 +63,7 @@ function Header({ user }: { user: UserType }) {
           elevation: 1,
         }}
       >
-        <Dashboard page="Home" role={user.role}/>
+        <Dashboard page="Home" role={user.role} />
       </View>
       <View>
         <Text
@@ -116,7 +116,9 @@ export default function Home() {
         }}
         renderItem={({ item }: { item: ServicoType }) => (
           <TouchableOpacity
-            onPress={() => navigation.navigate(item.navegacao as keyof RootStack as never)}
+            onPress={() =>
+              navigation.navigate(item.navegacao as keyof RootStack as never)
+            }
             activeOpacity={0.8}
             style={{
               width: (width - 60) / 2,
