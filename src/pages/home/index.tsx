@@ -88,10 +88,10 @@ export default function Home() {
   useEffect(() => {
     switch (user!.role) {
       case Role.ADMIN:
-        setData([servicos.Gerenciar_Espacos]);
+        setData([servicos.Espacos]);
         break;
       case Role.LABS:
-        setData([servicos.Gerenciar_Espacos]);
+        setData([servicos.Espacos]);
         break;
       case Role.INFRA:
         break;
@@ -116,7 +116,7 @@ export default function Home() {
         }}
         renderItem={({ item }: { item: ServicoType }) => (
           <TouchableOpacity
-            onPress={() => navigation.navigate("Gerenciamento_de_Espacos")}
+            onPress={() => navigation.navigate(item.navegacao as keyof RootStack as never)}
             activeOpacity={0.8}
             style={{
               width: (width - 60) / 2,

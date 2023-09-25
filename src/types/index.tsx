@@ -1,5 +1,3 @@
-import { RootStack } from "./index.routes";
-
 export interface CorType {
   vermelho: number;
   verde: number;
@@ -33,11 +31,29 @@ export interface ServicoType {
   status: boolean;
 }
 
+export interface HorarioType {
+  disponivel: boolean;
+  inicio: number | null;
+  fim: number | null;
+}
+
+interface DisponibilidadeType {
+  padrao: boolean;
+  domingo: HorarioType | null;
+  segunda: HorarioType | null;
+  terca: HorarioType | null;
+  quarta: HorarioType | null;
+  quinta: HorarioType | null;
+  sexta: HorarioType | null;
+  sabado: HorarioType | null;
+}
+
 export interface EspacoType {
   id: string;
   nome: string;
   localizacao: string;
-  imgens: string[];
+  imagens: string[];
   capacidade: number;
+  disponibilidade: DisponibilidadeType;
   status: boolean;
 }

@@ -5,12 +5,14 @@ import { Ionicons } from "@expo/vector-icons";
 import pkg from "../../package.json";
 import React, { useContext } from "react";
 import { AuthContext } from "../contexts/auth";
-import Gerenciar_Espacos from "../pages/gerenciar_espacos";
+import Espacos from "../pages/espaco";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RootStack } from "../types/index.routes";
-import Gerenciar_Espacos_Detalhes from "../pages/gerenciar_espacos/detalhes";
+import Espacos_Detalhes from "../pages/espaco/detalhes";
 import { Role } from "../types";
-import Gerenciar_Espacos_Adicionar from "../pages/gerenciar_espacos/adicionar";
+import Espacos_Adicionar from "../pages/espaco/adicionar";
+import Espacos_Editar from "../pages/espaco/editar";
+import utils from "../utils";
 
 type StackNavigation = NavigationProp<RootStack>;
 
@@ -38,22 +40,25 @@ export default function Privado_Router() {
             <Ionicons name="person-circle-outline" size={26} color="black" />
           </TouchableOpacity>
         );
-      case "Gerenciamento_de_Espacos":
+      case "Espacos":
         return (
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("Gerenciamento_de_Espacos_Adicionar")
-            }
-            activeOpacity={0.7}
-            style={{
-              width: 40,
-              height: 40,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Ionicons name="add-circle-outline" size={26} color="black" />
-          </TouchableOpacity>
+          utils.possui_permissao([Role.ADMIN, Role.LABS], user!.role) && (
+            <TouchableOpacity
+              disabled={
+                !utils.possui_permissao([Role.ADMIN, Role.LABS], user!.role)
+              }
+              onPress={() => navigation.navigate("Espacos_Adicionar")}
+              activeOpacity={0.7}
+              style={{
+                width: 40,
+                height: 40,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Ionicons name="add-circle-outline" size={26} color="black" />
+            </TouchableOpacity>
+          )
         );
       default:
         return undefined;
@@ -78,24 +83,31 @@ export default function Privado_Router() {
       {(user?.role === Role.ADMIN || user?.role === Role.LABS) && (
         <Group>
           <Screen
-            name="Gerenciamento_de_Espacos"
-            component={Gerenciar_Espacos}
+            name="Espacos"
+            component={Espacos}
             options={{
               title: "Gerenciar Espaços",
             }}
           />
           <Screen
-            name="Gerenciamento_de_Espacos_Adicionar"
-            component={Gerenciar_Espacos_Adicionar}
+            name="Espacos_Adicionar"
+            component={Espacos_Adicionar}
             options={{
               title: "Adicionar Espaço",
             }}
           />
           <Screen
-            name="Gerenciamento_de_Espacos_Detalhes"
-            component={Gerenciar_Espacos_Detalhes}
+            name="Espacos_Detalhes"
+            component={Espacos_Detalhes}
             options={{
               title: "Detalhes do Espaço",
+            }}
+          />
+          <Screen
+            name="Espacos_Editar"
+            component={Espacos_Editar}
+            options={{
+              title: "Editar Espaço",
             }}
           />
         </Group>

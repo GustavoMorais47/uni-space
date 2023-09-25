@@ -12,6 +12,7 @@ interface Props {
   styleContainer?: StyleProp<ViewStyle>;
   onPress?: () => void;
   title?: string;
+  disabled?: boolean;
 }
 
 export default function Card({
@@ -20,6 +21,7 @@ export default function Card({
   styleContainer,
   onPress,
   title,
+  disabled,
 }: Props) {
   return (
     <View
@@ -42,7 +44,7 @@ export default function Card({
       )}
       <TouchableOpacity
         onPress={onPress}
-        disabled={!onPress}
+        disabled={disabled !== undefined ? disabled : !onPress}
         activeOpacity={0.75}
         style={[
           {

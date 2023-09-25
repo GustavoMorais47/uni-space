@@ -1,8 +1,8 @@
 import { ServicoType } from "../types";
 
-const Gerenciar_Espacos: ServicoType = {
-  navegacao: "Gerenciar_Espacos",
-  titulo: "Gerenciar Espaços",
+const Espacos: ServicoType = {
+  navegacao: "Espacos",
+  titulo: "Espaços",
   imagem: "",
   cor_fundo: {
     vermelho: 255,
@@ -20,5 +20,5 @@ const Gerenciar_Espacos: ServicoType = {
 };
 
 export default {
-  Gerenciar_Espacos,
+  Espacos,
 };

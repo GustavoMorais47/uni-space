@@ -9,14 +9,15 @@ import {
   VirtualizedList,
 } from "react-native";
 import { useContext, useState } from "react";
-import Dashboard from "../../components/dashboard";
 import { AuthContext } from "../../contexts/auth";
 import db from "../../db.json";
 import { EspacoType } from "../../types";
 import Card from "../../components/card";
 import Conexao from "../../components/conexao";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
-import Input from "../../components/conexao/input";
+import Input from "../../components/input";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { RootStack } from "../../types/index.routes";
 
 const { width } = Dimensions.get("window");
 
@@ -29,7 +30,10 @@ const ordens = [
   "Menor Capacidade",
 ];
 
-export default function Gerenciar_Espacos() {
+type RootStackNavigation = NavigationProp<RootStack>;
+
+export default function Espacos() {
+  const navigation = useNavigation<RootStackNavigation>();
   const { user } = useContext(AuthContext);
   const [modal, setModal] = useState(false);
   const [indexOrdem, setIndexOrdem] = useState<number>(0);
@@ -258,7 +262,6 @@ export default function Gerenciar_Espacos() {
               gap: 20,
             }}
           >
-            <Dashboard role={user!.role} page="Gerenciamento_de_Espacos" />
             <View
               style={{
                 flexDirection: "row",
@@ -327,6 +330,11 @@ export default function Gerenciar_Espacos() {
         showsVerticalScrollIndicator={false}
         renderItem={({ item, index }: { item: EspacoType; index: number }) => (
           <Card
+            onPress={() =>
+              navigation.navigate("Espacos_Detalhes", {
+                id: item.id,
+              })
+            }
             style={{
               flexDirection: "row",
               justifyContent: "space-between",
